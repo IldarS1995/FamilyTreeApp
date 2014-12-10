@@ -1,0 +1,15 @@
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.Label?>
+<fx:root xmlns:fx="http://javafx.com/fxml" type="javafx.scene.control.TableView">
+    <placeholder>
+        <Label text="No people in list yet" />
+    </placeholder>
+    <columns>
+        <TableColumn fx:id="firstnameCol" text="First name" minWidth="100" />
+        <TableColumn fx:id="lastnameCol" text="Last name" minWidth="100" />
+        <TableColumn fx:id="birthDateCol" text="Birth date" minWidth="40" />
+        <TableColumn fx:id="passportIdCol" text="Passport ID" minWidth="40" />
+        <TableColumn fx:id="birthPlaceCol" text="Birth place" minWidth="100" />
+        <TableColumn fx:id="citizenshipCol" text="Citizenship" minWidth="100" />
+    </columns>
+</fx:root>

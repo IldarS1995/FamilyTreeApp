@@ -1,0 +1,78 @@
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<GridPane xmlns:fx="http://javafx.com/fxml" fx:controller="ru.kpfu.db.ildar.view.Controller"
+          hgap="10" vgap="10">
+    <MenuBar GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
+        <Menu text="File">
+            <SeparatorMenuItem />
+            <MenuItem text="Exit" onAction="#onExit" />
+        </Menu>
+        <Menu text="Help">
+            <MenuItem text="About" />
+        </Menu>
+    </MenuBar>
+
+    <HBox spacing="10" prefHeight="50" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS">
+        <Button onAction="#showAllPeopleClicked">
+            <tooltip><Tooltip text="Show all people" /></tooltip>
+            <graphic>
+                <ImageView fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="images/show_all_people.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button onAction="#addPersonClicked">
+            <tooltip><Tooltip text="Add new person" /></tooltip>
+            <graphic>
+                <ImageView fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="images/add_person.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button onAction="#addChildrenClicked">
+            <tooltip><Tooltip text="Person's children..." /></tooltip>
+            <graphic>
+                <ImageView fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="images/add_children.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button onAction="#browseChildrenClicked">
+            <tooltip><Tooltip text="Browse person's children" /></tooltip>
+            <graphic>
+                <ImageView fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="images/browse_children.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button fx:id="deletePersonBtn" disable="true" onAction="#deletePersonClicked">
+            <tooltip><Tooltip text="Delete a person" /></tooltip>
+            <graphic>
+                <ImageView fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="images/delete_person.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+    </HBox>
+
+    <TabPane fx:id="tabPane" GridPane.rowIndex="2" GridPane.hgrow="ALWAYS" />
+</GridPane>

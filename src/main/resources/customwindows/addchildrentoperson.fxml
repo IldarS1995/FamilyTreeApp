@@ -1,0 +1,27 @@
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Button?>
+<?import ru.kpfu.db.ildar.view.customcontrols.TableViewCustomControl?>
+<fx:root xmlns:fx="http://javafx.com/fxml" type="javafx.scene.layout.HBox" spacing="10">
+    <GridPane hgap="10" vgap="10">
+        <Label text="Search by name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <Label text="First name:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label text="Last name:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <Label text="Search by passport ID and citizenship:" GridPane.columnIndex="0"
+               GridPane.rowIndex="4" />
+        <Label text="Passport ID:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+        <Label text="Citizenship:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+
+        <TextField fx:id="firstnameField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <TextField fx:id="lastnameField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <TextField fx:id="passIdField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <ComboBox fx:id="citizenshipField" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+        <Button fx:id="nameAddBtn" text="Search by names"
+                GridPane.columnIndex="0" GridPane.rowIndex="3" onAction="#nameAddBtnClicked" />
+        <Button fx:id="passIdAddBtn" text="Search by passport ID"
+                GridPane.columnIndex="0" GridPane.rowIndex="7" onAction="#passIdAddBtnClicked" />
+    </GridPane>
+    <TableViewCustomControl fx:id="table" />
+</fx:root>

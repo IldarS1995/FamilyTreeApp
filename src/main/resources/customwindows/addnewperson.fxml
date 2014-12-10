@@ -1,0 +1,24 @@
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ComboBox?>
+<fx:root xmlns:fx="http://javafx.com/fxml" type="javafx.scene.layout.HBox">
+    <GridPane hgap="10" vgap="10">
+        <Label text="First name:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+        <Label text="Last name:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+        <Label text="Birth date:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+        <Label text="Passport ID:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+        <Label text="Birth place:" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+        <Label text="Citizenship:" GridPane.rowIndex="5" GridPane.columnIndex="0" />
+        <Label text="Gender:" GridPane.rowIndex="6" GridPane.columnIndex="0" />
+
+        <TextField fx:id="firstnameField" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+        <TextField fx:id="lastnameField" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+        <DatePicker fx:id="birthDateField" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+        <TextField fx:id="passportIdField" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+        <TextField fx:id="birthPlaceField" GridPane.rowIndex="4" GridPane.columnIndex="1" />
+        <ComboBox fx:id="citizenshipField" GridPane.rowIndex="5" GridPane.columnIndex="1" />
+        <ComboBox fx:id="genderField" GridPane.rowIndex="6" GridPane.columnIndex="1" />
+    </GridPane>
+</fx:root>
