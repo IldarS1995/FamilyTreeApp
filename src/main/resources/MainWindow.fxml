@@ -42,7 +42,7 @@
                 </ImageView>
             </graphic>
         </Button>
-        <Button onAction="#addChildrenClicked">
+        <Button fx:id="addChildrenBtn" onAction="#addChildrenClicked" disable="true">
             <tooltip><Tooltip text="Person's children..." /></tooltip>
             <graphic>
                 <ImageView fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true">
@@ -52,7 +52,7 @@
                 </ImageView>
             </graphic>
         </Button>
-        <Button onAction="#browseChildrenClicked">
+        <Button fx:id="browseChildrenBtn" onAction="#browseChildrenClicked" disable="true">
             <tooltip><Tooltip text="Browse person's children" /></tooltip>
             <graphic>
                 <ImageView fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true">

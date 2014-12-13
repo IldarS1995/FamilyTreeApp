@@ -7,8 +7,8 @@
     <columns>
         <TableColumn fx:id="firstnameCol" text="First name" minWidth="100" />
         <TableColumn fx:id="lastnameCol" text="Last name" minWidth="100" />
-        <TableColumn fx:id="birthDateCol" text="Birth date" minWidth="40" />
-        <TableColumn fx:id="passportIdCol" text="Passport ID" minWidth="40" />
+        <TableColumn fx:id="birthDateCol" text="Birth date" minWidth="80" />
+        <TableColumn fx:id="passportIdCol" text="Passport ID" minWidth="80" />
         <TableColumn fx:id="birthPlaceCol" text="Birth place" minWidth="100" />
         <TableColumn fx:id="citizenshipCol" text="Citizenship" minWidth="100" />
     </columns>

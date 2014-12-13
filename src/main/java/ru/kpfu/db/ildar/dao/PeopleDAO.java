@@ -29,4 +29,8 @@ public interface PeopleDAO
     void addChildrenToPerson(Person selectedItem, List<Person> children);
 
     void updatePerson(Person p);
+
+    boolean checkFullParents(Person child);
+
+    void deleteChild(Person parent, Person child);
 }

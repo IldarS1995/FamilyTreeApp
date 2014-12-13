@@ -3,6 +3,8 @@ package ru.kpfu.db.ildar.view.customcontrols;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import ru.kpfu.db.ildar.dao.PeopleDAO;
 import ru.kpfu.db.ildar.pojos.Person;
 
@@ -33,6 +35,21 @@ public class TreeCustomControl extends TreeView<Person>
         this.setRoot(trRoot);
 
         this.findPersonChildren(trRoot);
+
+        this.setOnKeyPressed(this::onKeyPressed);
+    }
+
+    private void onKeyPressed(KeyEvent evt)
+    {
+        TreeItem<Person> item = this.getSelectionModel().getSelectedItem();
+        if(evt.getCode() == KeyCode.DELETE)
+        {
+            Person parent = item.getParent().getValue();
+            Person child = item.getValue();
+
+            peopleDAO.deleteChild(parent, child);
+            item.getParent().getChildren().remove(item);
+        }
     }
 
     private void findPersonChildren(TreeItem<Person> trRoot)

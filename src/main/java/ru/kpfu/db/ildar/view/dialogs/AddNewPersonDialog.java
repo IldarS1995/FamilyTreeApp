@@ -77,7 +77,7 @@ public class AddNewPersonDialog extends Dialog
         }
         else
         {
-            genderField.getSelectionModel().select(person.getGender());
+            genderField.getSelectionModel().select((Character)person.getGender());
             citizenshipField.getSelectionModel().select(person.getCitizenship());
 
             firstnameField.setText(person.getFirstname());

@@ -72,10 +72,10 @@ public class AddChildrenToPersonDialog extends Dialog
     private void nameAddBtnClicked(ActionEvent evt)
     {
         String firstname = firstnameField.getText(), lastname = lastnameField.getText();
-        List<Person> people =
-                peopleDAO.findPeopleByName(firstname, lastname, parent.getBirthDate());
-        SelectPeopleFromTableDialog dial = new SelectPeopleFromTableDialog(owner,
-                "Select children", people, this.existingChildren, parent);
+        List<Person> people = peopleDAO.findPeopleByName(firstname, lastname, parent.getBirthDate());
+
+        SelectPeopleFromTableDialog dial = new SelectPeopleFromTableDialog(owner, "Select children",
+                people, this.existingChildren, parent, peopleDAO);
         if(dial.showDialog() == dial.getSubmitAction())
         {
             people = dial.getSelectedPeople();
@@ -92,8 +92,23 @@ public class AddChildrenToPersonDialog extends Dialog
 
         try
         {
-            Person p = peopleDAO.findPersonByPassportIDAndCitizenship(passportId, citizenship);
-            if(p.getBirthDate().compareTo(parent.getBirthDate()) < 0)
+            Person child = peopleDAO.findPersonByPassportIDAndCitizenship(passportId, citizenship);
+            if(peopleDAO.checkFullParents(child))
+            {
+                Dialogs.create().title("Error: child has full parents")
+                        .message("This child has already two parents").showError();
+                return;
+            }
+
+            List<Person> parents = peopleDAO.findParents(child);
+            if(parents.size() == 1 && parents.get(0).getGender() == parent.getGender())
+            {
+                Dialogs.create().title("Error: child has the parent with the same gender")
+                        .message("This child already has a parent with the same gender.").showError();
+                return;
+            }
+
+            if(child.getBirthDate().compareTo(parent.getBirthDate()) < 0)
             {
                 Dialogs.create().title("Person adding error")
                         .message("You can't select a child that is older than you.")
@@ -101,10 +116,10 @@ public class AddChildrenToPersonDialog extends Dialog
                 return;
             }
 
-            table.getItems().add(p);
-            table.scrollTo(p);
-            table.getSelectionModel().select(p);
-            newChildren.add(p);
+            table.getItems().add(child);
+            table.scrollTo(child);
+            table.getSelectionModel().select(child);
+            newChildren.add(child);
         }
         catch(EmptyResultDataAccessException exc)
         {
@@ -118,6 +133,7 @@ public class AddChildrenToPersonDialog extends Dialog
     {
         HBox pane = getPane();
         citizenshipField.setItems(FXCollections.observableArrayList(countries));
+        citizenshipField.getSelectionModel().select(0);
 
         nameAddBtn.disableProperty().bind(new BooleanBinding()
         {

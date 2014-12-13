@@ -134,6 +134,21 @@ public class PeopleDAOImpl implements PeopleDAO
                 String.valueOf(p.getGender()),
                 p.getPersonId());
     }
+
+    @Override
+    public boolean checkFullParents(Person child)
+    {
+        String sql = "select count(*) from PEOPLE_RELATIONS where child_id = ?";
+        int count = jdbcTemplate.queryForObject(sql, Integer.class, child.getPersonId());
+        return count >= 2;
+    }
+
+    @Override
+    public void deleteChild(Person parent, Person child)
+    {
+        String sql = "delete from PEOPLE_RELATIONS where parent_id = ? and child_id = ?";
+        jdbcTemplate.update(sql, parent.getPersonId(), child.getPersonId());
+    }
 }
 
 

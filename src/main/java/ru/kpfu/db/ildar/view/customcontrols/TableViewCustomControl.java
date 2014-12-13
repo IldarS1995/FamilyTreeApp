@@ -42,12 +42,16 @@ public class TableViewCustomControl extends TableView<Person>
 
         initColumns();
     }
-    public TableViewCustomControl(Button deletePersonBtn)
+    public TableViewCustomControl(Button... dependBtns)
     {
         this();
 
         this.getSelectionModel().selectedItemProperty().addListener(
-                (obs, oldVal, newVal) -> deletePersonBtn.setDisable(newVal == null)
+                (obs, oldVal, newVal) ->
+                {
+                    for(Button btn : dependBtns)
+                        btn.setDisable(newVal == null);
+                }
         );
     }
     public TableViewCustomControl(List<Person> people)
@@ -55,9 +59,9 @@ public class TableViewCustomControl extends TableView<Person>
         this();
         this.setItems(FXCollections.observableArrayList(people));
     }
-    public TableViewCustomControl(List<Person> people, Button deletePersonBtn)
+    public TableViewCustomControl(List<Person> people, Button... dependBtns)
     {
-        this(deletePersonBtn);
+        this(dependBtns);
         this.setItems(FXCollections.observableArrayList(people));
     }
 

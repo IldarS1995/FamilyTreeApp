@@ -37,6 +37,10 @@ public class Controller implements Initializable
     private TabPane tabPane;
     @FXML
     public Button deletePersonBtn;
+    @FXML
+    private Button addChildrenBtn;
+    @FXML
+    private Button browseChildrenBtn;
 
     private PeopleDAO peopleDAO;
 
@@ -107,8 +111,8 @@ public class Controller implements Initializable
     private void showAllPeopleClicked(ActionEvent actionEvent)
     {
         Tab tab = new Tab("All people");
-        TableViewCustomControl c =
-                new TableViewCustomControl(peopleDAO.findAllPeople(), deletePersonBtn);
+        TableViewCustomControl c = new TableViewCustomControl(peopleDAO.findAllPeople(),
+                        deletePersonBtn, addChildrenBtn, browseChildrenBtn);
         tab.setContent(c);
         tabPane.getTabs().add(tab);
 
@@ -237,14 +241,22 @@ public class Controller implements Initializable
         tabPane.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldVal, newVal) ->
                 {
-                    if(newVal.getContent() instanceof TableViewCustomControl)
+                    if(newVal != null && (newVal.getContent() instanceof TableViewCustomControl))
                     {
                         TableViewCustomControl table = (TableViewCustomControl)newVal.getContent();
                         if(table == null) return;
-                        deletePersonBtn.setDisable(table.getSelectionModel().getSelectedItem() == null);
+
+                        boolean disable = table.getSelectionModel().getSelectedItem() == null;
+                        deletePersonBtn.setDisable(disable);
+                        addChildrenBtn.setDisable(disable);
+                        browseChildrenBtn.setDisable(disable);
                     }
                     else
+                    {
                         deletePersonBtn.setDisable(true);
+                        addChildrenBtn.setDisable(true);
+                        browseChildrenBtn.setDisable(true);
+                    }
                 }
         );
     }
