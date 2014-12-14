@@ -62,6 +62,16 @@
                 </ImageView>
             </graphic>
         </Button>
+        <Button fx:id="browseParentsBtn" onAction="#browseParentsBtnClicked" disable="true">
+            <tooltip><Tooltip text="Browse person's parents" /></tooltip>
+            <graphic>
+                <ImageView fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="images/parents.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
         <Button fx:id="deletePersonBtn" disable="true" onAction="#deletePersonClicked">
             <tooltip><Tooltip text="Delete a person" /></tooltip>
             <graphic>

@@ -32,5 +32,5 @@ public interface PeopleDAO
 
     boolean checkFullParents(Person child);
 
-    void deleteChild(Person parent, Person child);
+    void deletePeopleRelations(Person parent, Person child);
 }

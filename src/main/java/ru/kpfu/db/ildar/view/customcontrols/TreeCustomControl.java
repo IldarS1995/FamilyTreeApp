@@ -47,7 +47,7 @@ public class TreeCustomControl extends TreeView<Person>
             Person parent = item.getParent().getValue();
             Person child = item.getValue();
 
-            peopleDAO.deleteChild(parent, child);
+            peopleDAO.deletePeopleRelations(parent, child);
             item.getParent().getChildren().remove(item);
         }
     }

@@ -144,7 +144,7 @@ public class PeopleDAOImpl implements PeopleDAO
     }
 
     @Override
-    public void deleteChild(Person parent, Person child)
+    public void deletePeopleRelations(Person parent, Person child)
     {
         String sql = "delete from PEOPLE_RELATIONS where parent_id = ? and child_id = ?";
         jdbcTemplate.update(sql, parent.getPersonId(), child.getPersonId());

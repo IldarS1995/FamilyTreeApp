@@ -147,6 +147,7 @@ public class AddNewPersonDialog extends Dialog
                 passportIdField.setText(oldVal);
         });
 
+        this.setResizable(false);
         ButtonBar.setType(submitAction, ButtonBar.ButtonType.OK_DONE);
         this.getActions().addAll(Actions.CANCEL, submitAction);
         this.setContent(pane);

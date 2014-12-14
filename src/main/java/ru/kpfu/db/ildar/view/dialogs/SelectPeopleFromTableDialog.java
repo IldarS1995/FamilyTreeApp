@@ -53,8 +53,13 @@ public class SelectPeopleFromTableDialog extends Dialog
             public void handle(ActionEvent actionEvent)
             {
                 if(!checkFullParents(table))
+                    //Checks if a child has already two parents
                     return;
                 if(!checkExistingParentGender(table))
+                    //Checks if a child's parents will have the same gender
+                    return;
+                if(parentIsChildOfOtherParent(table))
+                    //Checks if one parent of a child is a descendant of the other parent
                     return;
 
                 selectedPeople = table.getSelectionModel().getSelectedItems();
@@ -69,9 +74,42 @@ public class SelectPeopleFromTableDialog extends Dialog
         );
 
         ButtonBar.setType(submitAction, ButtonBar.ButtonType.OK_DONE);
+        this.setResizable(false);
         this.getActions().addAll(Actions.CANCEL, submitAction);
         this.setContent(pane);
         return this.show();
+    }
+
+    private boolean parentIsChildOfOtherParent(TableViewCustomControl table)
+    {
+        List<Person> parChildren = peopleDAO.findChildren(parent);
+
+        List<Person> selectedPeople = table.getSelectionModel().getSelectedItems();
+        StringBuilder sb = new StringBuilder();
+        for(Person child : selectedPeople)
+        {
+            List<Person> parents = peopleDAO.findParents(child);
+            if(parents.size() == 0)
+                continue;
+
+            Person parent1 = parents.get(0);
+            List<Person> par1Children = peopleDAO.findChildren(parent1);
+            if(par1Children.contains(parent) || parChildren.contains(parent1))
+                sb.append(child.getFirstname() + " " + child.getLastname() + ", " +
+                        child.getPassportId() + "\n");
+        }
+
+        if(sb.length() != 0)
+        {
+            Dialogs.create().title("Error: one parent is a descendant of another")
+                    .message("There are children selected who already have a parent and he" +
+                            " is either the descendant, or the parent of the parent you" +
+                            " want to make this child's parent: \n"
+                            + sb.toString()).showError();
+            return true;
+        }
+        else
+            return false;
     }
 
     private boolean checkExistingParentGender(TableViewCustomControl table)
@@ -83,6 +121,7 @@ public class SelectPeopleFromTableDialog extends Dialog
             List<Person> parents = peopleDAO.findParents(child);
             if(parents.size() == 0)
                 continue;
+
             Person parent1 = parents.get(0);
             if(parent1.getGender() == parent.getGender())
                 sb.append(child.getFirstname() + " " + child.getLastname() + ", " +

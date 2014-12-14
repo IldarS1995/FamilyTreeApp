@@ -1,0 +1,31 @@
+<?import javafx.scene.layout.HBox?>
+<?import ru.kpfu.db.ildar.view.customcontrols.TableViewCustomControl?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<fx:root xmlns:fx="http://javafx.com/fxml" type="javafx.scene.layout.VBox" spacing="10">
+    <HBox spacing="10">
+        <Button fx:id="addParentBtn" onAction="#addParentBtnClicked">
+            <tooltip><Tooltip text="Add a parent to this person" /></tooltip>
+            <graphic>
+                <ImageView fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="images/add_children.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button fx:id="removeParentBtn" onAction="#removeParentBtnClicked">
+            <tooltip><Tooltip text="Remove a person from this person's parents list" /></tooltip>
+            <graphic>
+                <ImageView fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="images/delete_person.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+    </HBox>
+    <TableViewCustomControl fx:id="table" />
+</fx:root>

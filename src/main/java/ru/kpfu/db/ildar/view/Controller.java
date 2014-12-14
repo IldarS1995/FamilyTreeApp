@@ -1,6 +1,5 @@
 package ru.kpfu.db.ildar.view;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -41,6 +40,8 @@ public class Controller implements Initializable
     private Button addChildrenBtn;
     @FXML
     private Button browseChildrenBtn;
+    @FXML
+    private Button browseParentsBtn;
 
     private PeopleDAO peopleDAO;
 
@@ -108,11 +109,23 @@ public class Controller implements Initializable
     }
 
     @FXML
+    private void browseParentsBtnClicked(ActionEvent actionEvent)
+    {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        TableViewCustomControl c = (TableViewCustomControl)tab.getContent();
+        Person p = c.getSelectionModel().getSelectedItem();
+
+        BrowseParentsDialog dialog = new BrowseParentsDialog(primaryStage, "Browse parents",
+                p, peopleDAO, countries);
+        dialog.showDialog();
+    }
+
+    @FXML
     private void showAllPeopleClicked(ActionEvent actionEvent)
     {
         Tab tab = new Tab("All people");
         TableViewCustomControl c = new TableViewCustomControl(peopleDAO.findAllPeople(),
-                        deletePersonBtn, addChildrenBtn, browseChildrenBtn);
+                        deletePersonBtn, addChildrenBtn, browseChildrenBtn, browseParentsBtn);
         tab.setContent(c);
         tabPane.getTabs().add(tab);
 
@@ -169,7 +182,7 @@ public class Controller implements Initializable
                 .getSelectedItem().getContent();
         Person p = table.getSelectionModel().getSelectedItem();
 
-        AddChildrenToPersonDialog dialog = new AddChildrenToPersonDialog(primaryStage,
+        PeopleSearchDialog dialog = new PeopleSearchDialog(primaryStage,
                 "Adding children to person", p, peopleDAO, countries);
         if(dialog.showDialog() == dialog.getSubmitAction())
         {
@@ -250,12 +263,14 @@ public class Controller implements Initializable
                         deletePersonBtn.setDisable(disable);
                         addChildrenBtn.setDisable(disable);
                         browseChildrenBtn.setDisable(disable);
+                        browseParentsBtn.setDisable(disable);
                     }
                     else
                     {
                         deletePersonBtn.setDisable(true);
                         addChildrenBtn.setDisable(true);
                         browseChildrenBtn.setDisable(true);
+                        browseParentsBtn.setDisable(true);
                     }
                 }
         );
