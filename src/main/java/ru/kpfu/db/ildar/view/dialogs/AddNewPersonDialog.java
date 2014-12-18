@@ -24,14 +24,19 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+/** Dialog that gives ability to add new person to the database or update fields
+ * of the specified person */
 public class AddNewPersonDialog extends Dialog
 {
     private Action submitAction;
     private Person person;
 
+    /** Submit action button is 'OK' button */
     public Action getSubmitAction() { return submitAction; }
+    /** Person that is to add or update in the database */
     public Person getPerson() { return person; }
 
+    /** List of countries from the database */
     private List<String> countries;
 
     private int personId = 0;
@@ -51,31 +56,38 @@ public class AddNewPersonDialog extends Dialog
     @FXML
     private ComboBox<Character> genderField;
 
+    /** Create new person */
     public AddNewPersonDialog(Object owner, String title, List<String> countries)
     {
         super(owner, title);
 
         this.countries = countries;
     }
+    /** Update existing person */
     public AddNewPersonDialog(Object owner, String title, List<String> countries, Person person)
     {
         this(owner, title, countries);
         this.person = person;
     }
 
+    /** Open this dialog */
     public Action showDialog()
     {
+        //Get root control of the dialog from FXML file
         GridPane pane = getPane();
 
+        //Initialize citizenship and gender combo boxes
         citizenshipField.setItems(FXCollections.observableArrayList(countries));
         genderField.setItems(FXCollections.observableArrayList('m', 'f'));
 
         if(person == null)
+            //If person == null, it means that this dialog is to create new person
         {
             genderField.getSelectionModel().select(0);
             citizenshipField.getSelectionModel().select(0);
         }
         else
+            //Fill fields with existing person fields values
         {
             genderField.getSelectionModel().select((Character)person.getGender());
             citizenshipField.getSelectionModel().select(person.getCitizenship());
@@ -90,11 +102,13 @@ public class AddNewPersonDialog extends Dialog
             birthPlaceField.setText(person.getBirthPlace());
         }
 
+        //Button that creates a person object and closes the dialog
         submitAction = new AbstractAction(person == null ? "Submit" : "Update")
         {
             @Override
             public void handle(ActionEvent actionEvent)
             {
+                //Parsing entered birth date
                 LocalDate lDate = birthDateField.getValue();
                 Calendar c = new GregorianCalendar(lDate.getYear(),
                         lDate.getMonthValue() - 1, lDate.getDayOfMonth());
@@ -115,6 +129,7 @@ public class AddNewPersonDialog extends Dialog
 
         submitAction.disabledProperty().set(true);
 
+        //Allow submtting form only when all non-null fields are filled with values
         submitAction.disabledProperty().bind(new BooleanBinding()
         {
             { super.bind(firstnameField.textProperty(), lastnameField.textProperty(),
@@ -141,6 +156,7 @@ public class AddNewPersonDialog extends Dialog
             }
         });
 
+        //Allow passport ID field only to enter numeric values
         passportIdField.textProperty().addListener((obs, oldVal, newVal) ->
         {
             if(!newVal.matches("\\d+") && !newVal.equals(""))
@@ -157,6 +173,7 @@ public class AddNewPersonDialog extends Dialog
         return this.show();
     }
 
+    /** Get root control from FXML file */
     public GridPane getPane()
     {
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader()

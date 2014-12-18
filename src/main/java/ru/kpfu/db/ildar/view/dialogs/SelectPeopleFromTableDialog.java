@@ -14,18 +14,26 @@ import ru.kpfu.db.ildar.view.customcontrols.TableViewCustomControl;
 
 import java.util.List;
 
+/** Dialog that is used in AddChildrenDialog - gives ability to select people
+ * from the table and makes some data checks */
 public class SelectPeopleFromTableDialog extends Dialog
 {
+    /** People that user has to select from */
     private List<Person> people;
 
     private Action submitAction;
+    /** Button that indicates 'Submit' action */
     public Action getSubmitAction() { return submitAction; }
 
     private List<Person> selectedPeople;
+    /** Returns list of people that were selected by user */
     public List<Person> getSelectedPeople() { return selectedPeople; }
 
+    /** Interface that gives connection to the database */
     private PeopleDAO peopleDAO;
 
+    /** This person is presumed to be parent of the selected people. Needed for
+     * some data consistency checks */
     private Person parent;
 
     public SelectPeopleFromTableDialog(Object owner, String title, List<Person> people,
@@ -39,8 +47,10 @@ public class SelectPeopleFromTableDialog extends Dialog
         usedPeople.stream().forEach(people::remove);
     }
 
+    /** Open this dialog */
     public Action showDialog()
     {
+        //Root control
         GridPane pane = new GridPane();
         pane.setVgap(10);
         pane.add(new Label("Select people you want be the person's children:"), 0, 0);
@@ -80,6 +90,7 @@ public class SelectPeopleFromTableDialog extends Dialog
         return this.show();
     }
 
+    /** Checks if one parent of a child is a descendant of the other parent */
     private boolean parentIsChildOfOtherParent(TableViewCustomControl table)
     {
         List<Person> parChildren = peopleDAO.findChildren(parent);
@@ -112,6 +123,7 @@ public class SelectPeopleFromTableDialog extends Dialog
             return false;
     }
 
+    /** Checks if a child's parents will have the same gender */
     private boolean checkExistingParentGender(TableViewCustomControl table)
     {
         List<Person> selectedPeople = table.getSelectionModel().getSelectedItems();
@@ -140,6 +152,7 @@ public class SelectPeopleFromTableDialog extends Dialog
             return true;
     }
 
+    /** Checks if a child has already two parents */
     private boolean checkFullParents(TableViewCustomControl table)
     {
         List<Person> selectedPeople = table.getSelectionModel().getSelectedItems();

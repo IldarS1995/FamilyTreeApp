@@ -6,6 +6,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import org.controlsfx.control.ButtonBar;
 import org.controlsfx.control.action.AbstractAction;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
@@ -67,6 +68,7 @@ public class ParentSearchDialog extends Dialog
                              citizenshipField.getSelectionModel().getSelectedItem());
                 }
                 catch(EmptyResultDataAccessException exc)
+                        //Generated if a person wasn't found
                 {
                     Dialogs.create().title("Error: not found")
                             .message("The person with such passport ID and citizenship wasn't found.")
@@ -75,6 +77,7 @@ public class ParentSearchDialog extends Dialog
                 }
 
                 if(parent.getBirthDate().compareTo(child.getBirthDate()) >= 0)
+                    //Enter person is younger than the child
                 {
                     Dialogs.create().title("Error: birth order")
                             .message("Child can't be older than his parent")
@@ -84,6 +87,7 @@ public class ParentSearchDialog extends Dialog
 
                 List<Person> children = peopleDAO.findChildren(parent);
                 if(children.contains(child))
+                    //Specified person that is in the list
                 {
                     Dialogs.create().title("Error: person is already parent of this child")
                             .message("The person specified is already parent of this child")
@@ -92,21 +96,25 @@ public class ParentSearchDialog extends Dialog
                 }
 
                 List<Person> parents = peopleDAO.findParents(child);
-                if(parents.size() == 0)
-                    return;
-                Person parent1 = parents.get(0);
-                if(parent.getGender() == parent1.getGender())
+                if(parents.size() != 0)
                 {
-                    Dialogs.create().title("Error: one parent is descendant of the other")
-                            .message("One of the parents is either the descendant, or the " +
-                                    "parent of the other one.").showError();
-                    return;
+                    Person parent1 = parents.get(0);
+                    if(parent.getGender() == parent1.getGender())
+                        //Attempt to add a parent that has the same gender
+                    {
+                        Dialogs.create().title("Error: attempt to add person with same gender")
+                                .message("Attempt to add a parent with the same gender as of" +
+                                        " existing parent was made.").showError();
+                        return;
+                    }
                 }
 
                 Dialog dialog = (Dialog)actionEvent.getSource();
                 dialog.hide();
             }
         };
+
+        submitAction.disabledProperty().set(true);
 
         passIdField.textProperty().addListener((obs, oldVal, newVal) ->
         {
@@ -119,6 +127,7 @@ public class ParentSearchDialog extends Dialog
             submitAction.disabledProperty().set(newVal.trim().length() == 0);
         });
 
+        ButtonBar.setType(submitAction, ButtonBar.ButtonType.OK_DONE);
         this.setResizable(false);
         this.setContent(pane);
         this.getActions().addAll(Actions.CANCEL, submitAction);

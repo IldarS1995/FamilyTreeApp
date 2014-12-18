@@ -1,4 +1,4 @@
-package ru.kpfu.db.ildar.dao.templatesimpl.mappers;
+package ru.kpfu.db.ildar.dao.templatesimpl;
 
 import org.springframework.jdbc.core.RowMapper;
 import ru.kpfu.db.ildar.pojos.Person;

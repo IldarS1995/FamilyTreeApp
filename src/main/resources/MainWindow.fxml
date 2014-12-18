@@ -17,7 +17,7 @@
             <MenuItem text="Exit" onAction="#onExit" />
         </Menu>
         <Menu text="Help">
-            <MenuItem text="About" />
+            <MenuItem text="About" onAction="#aboutClicked" />
         </Menu>
     </MenuBar>
 
@@ -38,6 +38,16 @@
                 <ImageView fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="images/add_person.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button onAction="#findPeopleClicked">
+            <tooltip><Tooltip text="Find people" /></tooltip>
+            <graphic>
+                <ImageView fitWidth="50" fitHeight="50" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="images/search_person.png" />
                     </image>
                 </ImageView>
             </graphic>

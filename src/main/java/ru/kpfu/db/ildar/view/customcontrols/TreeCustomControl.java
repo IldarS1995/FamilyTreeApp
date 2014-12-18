@@ -11,14 +11,18 @@ import ru.kpfu.db.ildar.pojos.Person;
 import java.io.IOException;
 import java.util.List;
 
+/** Represents a tree where people are displayed - hierarchical structure
+ * displays relationships between people - child nodes are the children. */
 public class TreeCustomControl extends TreeView<Person>
 {
+    /** Objects that gives connection to the database */
     private PeopleDAO peopleDAO;
 
     public TreeCustomControl(Person rootPerson, PeopleDAO peopleDAO)
     {
         this.peopleDAO = peopleDAO;
 
+        //Load FXML file where GUI is defined
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader()
                 .getResource("customwindows/treecustom.fxml"));
         loader.setController(this);
@@ -30,6 +34,7 @@ public class TreeCustomControl extends TreeView<Person>
         }
         catch(IOException exc) { throw new RuntimeException(exc); }
 
+        //Add root item to the tree
         TreeItem<Person> trRoot = new TreeItem<>(rootPerson);
         trRoot.setExpanded(true);
         this.setRoot(trRoot);
@@ -39,11 +44,16 @@ public class TreeCustomControl extends TreeView<Person>
         this.setOnKeyPressed(this::onKeyPressed);
     }
 
+    /** Event that occurs when some key was pressed */
     private void onKeyPressed(KeyEvent evt)
     {
         TreeItem<Person> item = this.getSelectionModel().getSelectedItem();
         if(evt.getCode() == KeyCode.DELETE)
+            //Delete connection between parent and child
         {
+            if(item.getParent() == null)
+                return;
+
             Person parent = item.getParent().getValue();
             Person child = item.getValue();
 
@@ -52,6 +62,7 @@ public class TreeCustomControl extends TreeView<Person>
         }
     }
 
+    /** Finds all children of this person in the database and creates child nodes */
     private void findPersonChildren(TreeItem<Person> trRoot)
     {
         Person p = trRoot.getValue();

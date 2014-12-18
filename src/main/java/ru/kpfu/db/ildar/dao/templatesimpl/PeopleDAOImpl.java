@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.kpfu.db.ildar.dao.PeopleDAO;
-import ru.kpfu.db.ildar.dao.templatesimpl.mappers.PersonMapper;
 import ru.kpfu.db.ildar.pojos.*;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,14 +31,6 @@ public class PeopleDAOImpl implements PeopleDAO
     {
         String sql = "select * from PEOPLE where person_id=?";
         return jdbcTemplate.queryForObject(sql, new PersonMapper(), id);
-    }
-
-    @Override
-    public List<Person> findPeopleByName(String firstname, String lastname, Date birthDateUpLim)
-    {
-        String sql = "select * from PEOPLE where firstname = ? and lastname = ? " +
-                "and birth_date > ?";
-        return jdbcTemplate.query(sql, new PersonMapper(), firstname, lastname, birthDateUpLim);
     }
 
     @Override
@@ -148,6 +140,47 @@ public class PeopleDAOImpl implements PeopleDAO
     {
         String sql = "delete from PEOPLE_RELATIONS where parent_id = ? and child_id = ?";
         jdbcTemplate.update(sql, parent.getPersonId(), child.getPersonId());
+    }
+
+    @Override
+    public List<Person> findPeopleByDynamicCriteria(String firstName,
+                            String lastName, Date birthDateFrom, Date birthDateTo)
+    {
+        //Deciding which arguments are to pass to query method
+        List<Object> args = new ArrayList<>();
+
+        String sql = "select * from PEOPLE where ";
+        if(firstName != null && firstName.trim().length() != 0)
+            //first name field check
+        {
+            sql += "firstname = ? and ";
+            args.add(firstName);
+        }
+        if(lastName != null && lastName.trim().length() != 0)
+            //last name field check
+        {
+            sql += "lastname = ? and ";
+            args.add(lastName);
+        }
+        if(birthDateFrom != null)
+            //birth date start interval check
+        {
+            sql += "birth_date > ? and ";
+            args.add(birthDateFrom);
+        }
+        if(birthDateTo != null)
+            //birth data end interval check
+        {
+            sql += "birth_date < ? and ";
+            args.add(birthDateTo);
+        }
+        sql = sql.substring(0, sql.lastIndexOf("and "));
+
+        Object[] objs = new Object[args.size()];
+        for(int i = 0;i < args.size();i++)
+            objs[i] = args.get(i);
+
+        return jdbcTemplate.query(sql, new PersonMapper(), objs);
     }
 }
 

@@ -26,19 +26,27 @@ import ru.kpfu.db.ildar.view.customcontrols.TableViewCustomControl;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PeopleSearchDialog extends Dialog
+/** Dialog that gives ability to find and add children to some person */
+public class AddChildrenDialog extends Dialog
 {
     private Action submitAction;
+    /** Submit action button is 'OK' button */
     public Action getSubmitAction() { return submitAction; }
 
+    /** List of children this person already has */
     private List<Person> existingChildren;
 
     private List<Person> newChildren = new ArrayList<>();
+    /** Added children */
     public List<Person> getNewChildren() { return newChildren; }
 
+    /** Object to communicate with database */
     private PeopleDAO peopleDAO;
+    /** Dialog owner(usually other Window object) */
     private Object owner;
+    /** All countries from database */
     private List<String> countries;
+    /** Person for whom we will be searching and adding children to */
     private Person parent;
 
     @FXML
@@ -57,7 +65,7 @@ public class PeopleSearchDialog extends Dialog
     @FXML
     private Button passIdAddBtn;
 
-    public PeopleSearchDialog(Object owner, String title, Person parent, PeopleDAO peopleDAO, List<String> countries)
+    public AddChildrenDialog(Object owner, String title, Person parent, PeopleDAO peopleDAO, List<String> countries)
     {
         super(owner, title);
         this.peopleDAO = peopleDAO;
@@ -68,11 +76,13 @@ public class PeopleSearchDialog extends Dialog
         this.parent = parent;
     }
 
+    /** Search children by first name and last name */
     @FXML
     private void nameAddBtnClicked(ActionEvent evt)
     {
         String firstname = firstnameField.getText(), lastname = lastnameField.getText();
-        List<Person> people = peopleDAO.findPeopleByName(firstname, lastname, parent.getBirthDate());
+        List<Person> people = peopleDAO.findPeopleByDynamicCriteria(firstname,
+                lastname, parent.getBirthDate(), null);
 
         SelectPeopleFromTableDialog dial = new SelectPeopleFromTableDialog(owner, "Select children",
                 people, this.existingChildren, parent, peopleDAO);
@@ -84,6 +94,7 @@ public class PeopleSearchDialog extends Dialog
         }
     }
 
+    /** Search child by passport ID and citizenship */
     @FXML
     private void passIdAddBtnClicked(ActionEvent evt)
     {
@@ -94,6 +105,7 @@ public class PeopleSearchDialog extends Dialog
         {
             Person child = peopleDAO.findPersonByPassportIDAndCitizenship(passportId, citizenship);
             if(peopleDAO.checkFullParents(child))
+                //Child has already full parents
             {
                 Dialogs.create().title("Error: child has full parents")
                         .message("This child has already two parents").showError();
@@ -102,6 +114,7 @@ public class PeopleSearchDialog extends Dialog
 
             List<Person> parents = peopleDAO.findParents(child);
             if(parents.size() == 1 && parents.get(0).getGender() == parent.getGender())
+                //Attempt to add a parent with the sam gender as of existing child's parent
             {
                 Dialogs.create().title("Error: child has the parent with the same gender")
                         .message("This child already has a parent with the same gender.").showError();
@@ -112,6 +125,8 @@ public class PeopleSearchDialog extends Dialog
             List<Person> par1Children = peopleDAO.findChildren(parent1);
             List<Person> parChildren = peopleDAO.findChildren(parent);
             if(par1Children.contains(parent) || parChildren.contains(parent1))
+                //Attempt to make child's parent a person that is a descendant or a parent
+                //of existing parent
             {
                 Dialogs.create().title("Error: one parent is descendant of the other")
                         .message("One of the parents is either the descendant, or the " +
@@ -120,6 +135,7 @@ public class PeopleSearchDialog extends Dialog
             }
 
             if(child.getBirthDate().compareTo(parent.getBirthDate()) < 0)
+                //Attempt to make child's parent a person that is younger than the child
             {
                 Dialogs.create().title("Person adding error")
                         .message("You can't select a child that is older than you.")
@@ -133,6 +149,7 @@ public class PeopleSearchDialog extends Dialog
             newChildren.add(child);
         }
         catch(EmptyResultDataAccessException exc)
+                //Child not found
         {
             Dialogs.create().title("Person finding error")
                     .message("Couldn't find a person with such passport ID and citizenship")
@@ -140,24 +157,34 @@ public class PeopleSearchDialog extends Dialog
         }
     }
 
+    /** Open the dialog */
     public Action showDialog()
     {
         HBox pane = getPane();
+
+        //Set countries to the combo box
         citizenshipField.setItems(FXCollections.observableArrayList(countries));
         citizenshipField.getSelectionModel().select(0);
 
+        table.setItems(FXCollections.observableArrayList(existingChildren));
+
+        //Disable nameAddBtn button when first name and last name fields are empty
+        //and enable otherwise
         nameAddBtn.disableProperty().bind(new BooleanBinding()
         {
-            { super.bind(firstnameField.textProperty(), lastnameField.textProperty()); }
+            {
+                super.bind(firstnameField.textProperty(), lastnameField.textProperty());
+            }
 
             @Override
             protected boolean computeValue()
             {
-                return firstnameField.getText().length() == 0 ||
-                        lastnameField.getText().length() == 0;
+                return firstnameField.getText().length() == 0 || lastnameField.getText().length() == 0;
             }
         });
 
+        //Disable passIdAddBtn button when passport ID field is empty.
+        //Citizenship field won't be null since user can't choose an empty value.
         passIdAddBtn.disableProperty().bind(new BooleanBinding()
         {
             { super.bind(passIdField.textProperty()); }
@@ -169,12 +196,14 @@ public class PeopleSearchDialog extends Dialog
             }
         });
 
+        //Allow entering only numbers in passport ID field
         passIdField.textProperty().addListener((obs, oldVal, newVal) ->
         {
             if(!newVal.matches("\\d+") && !newVal.equals(""))
                 passIdField.setText(oldVal);
         });
 
+        //When person clicks 'Submit', close the dialog
         submitAction = new AbstractAction("Submit")
         {
             @Override
@@ -195,6 +224,7 @@ public class PeopleSearchDialog extends Dialog
         return this.show();
     }
 
+    /** Load root control from FXML file */
     private HBox getPane()
     {
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader()

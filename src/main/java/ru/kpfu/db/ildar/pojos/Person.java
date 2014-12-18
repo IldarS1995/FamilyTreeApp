@@ -3,6 +3,7 @@ package ru.kpfu.db.ildar.pojos;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
+/** POJO class that represents PEOPLE table record */
 public class Person
 {
     private int personId;
@@ -68,6 +69,7 @@ public class Person
         return result;
     }
 
+    /** Get birth date in 'dd/MM/yyyy' format */
     public String getBirthDateAsString()
     {
         if(birthDate == null)
@@ -78,6 +80,7 @@ public class Person
     }
 
 
+    /** Gender of the person - either 'm', or 'f' */
     public char getGender()
     {
         return gender;
@@ -88,6 +91,7 @@ public class Person
         this.gender = gender;
     }
 
+    /** Primary key (PERSON_ID) of the person */
     public int getPersonId()
     {
         return personId;
@@ -98,6 +102,7 @@ public class Person
         this.personId = personId;
     }
 
+    /** Represents FIRST_NAME column */
     public String getFirstname()
     {
         return firstname;
@@ -108,6 +113,7 @@ public class Person
         this.firstname = firstname;
     }
 
+    /** Represents LAST_NAME column */
     public String getLastname()
     {
         return lastname;
@@ -118,6 +124,7 @@ public class Person
         this.lastname = lastname;
     }
 
+    /** Represents BIRTH_DATE column */
     public Date getBirthDate()
     {
         return birthDate;
@@ -128,6 +135,7 @@ public class Person
         this.birthDate = birthDate;
     }
 
+    /** Represents PASSPORT_ID column */
     public int getPassportId()
     {
         return passportId;
@@ -138,6 +146,7 @@ public class Person
         this.passportId = passportId;
     }
 
+    /** Represents BIRTH_PLACE column */
     public String getBirthPlace()
     {
         return birthPlace;
@@ -148,6 +157,7 @@ public class Person
         this.birthPlace = birthPlace;
     }
 
+    /** Represents CITIZENSHIP column */
     public String getCitizenship()
     {
         return citizenship;

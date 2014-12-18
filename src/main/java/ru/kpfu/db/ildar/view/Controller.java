@@ -16,6 +16,7 @@ import org.controlsfx.dialog.Dialogs;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.transaction.CannotCreateTransactionException;
 import ru.kpfu.db.ildar.dao.PeopleDAO;
 import ru.kpfu.db.ildar.pojos.Person;
 import ru.kpfu.db.ildar.view.customcontrols.*;
@@ -26,39 +27,51 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/** Controller of the main window - initializes and runs the application */
 public class Controller implements Initializable
 {
     public static Stage primaryStage;
 
+    /** List of countries from the database */
     private List<String> countries;
 
+    /** Pane where tables and tree controls are placed in tabs */
     @FXML
     private TabPane tabPane;
+    /** Delete person button */
     @FXML
     public Button deletePersonBtn;
+    /** Add children button */
     @FXML
     private Button addChildrenBtn;
+    /** Browse person's children button */
     @FXML
     private Button browseChildrenBtn;
+    /** Browse person's parents button */
     @FXML
     private Button browseParentsBtn;
 
+    /** Interface that gives connection to the database */
     private PeopleDAO peopleDAO;
 
+    /** Exit from the application */
     @FXML
     private void onExit(ActionEvent evt)
     {
         System.exit(0);
     }
 
+    /** Initialize DAO interface */
     private void initPeopleDAO()
     {
+        //Spring framework JDBC templates is used
         ConfigurableApplicationContext context =
                 new ClassPathXmlApplicationContext("dispatcher-servlet.xml");
         peopleDAO = context.getBean(PeopleDAO.class);
         context.close();
     }
 
+    /** Add new person button clicked */
     @FXML
     private void addPersonClicked(ActionEvent actionEvent)
     {
@@ -71,6 +84,7 @@ public class Controller implements Initializable
         }
     }
 
+    /** Adding person to the database and processing exceptions that occured */
     private void addNewPerson(Person p)
     {
         try
@@ -108,6 +122,7 @@ public class Controller implements Initializable
         }
     }
 
+    /** Browse parents button clicked */
     @FXML
     private void browseParentsBtnClicked(ActionEvent actionEvent)
     {
@@ -115,27 +130,44 @@ public class Controller implements Initializable
         TableViewCustomControl c = (TableViewCustomControl)tab.getContent();
         Person p = c.getSelectionModel().getSelectedItem();
 
-        BrowseParentsDialog dialog = new BrowseParentsDialog(primaryStage, "Browse parents",
-                p, peopleDAO, countries);
+        String name = p.getLastname() + ", " + p.getFirstname().charAt(0) + ".";
+        BrowseParentsDialog dialog = new BrowseParentsDialog(primaryStage,
+                "Browse " + name + " parents", p, peopleDAO, countries);
         dialog.showDialog();
     }
 
+    /** 'All people' button clicked - show tab with all people from the database */
     @FXML
     private void showAllPeopleClicked(ActionEvent actionEvent)
     {
         Tab tab = new Tab("All people");
-        TableViewCustomControl c = new TableViewCustomControl(peopleDAO.findAllPeople(),
-                        deletePersonBtn, addChildrenBtn, browseChildrenBtn, browseParentsBtn);
+        TableViewCustomControl c;
+        try
+        {
+            c = new TableViewCustomControl(peopleDAO.findAllPeople(), deletePersonBtn,
+                    addChildrenBtn, browseChildrenBtn, browseParentsBtn);
+        }
+        catch(CannotCreateTransactionException exc)
+                //It seems that the database is off
+        {
+            Dialogs.create().title("Error: Couldn't connect")
+                    .message("Oracle database is not available. " +
+                            "Please make sure it's on.").showError();
+            return;
+        }
+
         tab.setContent(c);
         tabPane.getTabs().add(tab);
 
         tabPane.getSelectionModel().select(tab);
 
+        final TableViewCustomControl v = c;
         c.setOnMouseClicked((evt) ->
+                //Double mouse click on person - open dialog for person data modification
         {
             if (evt.getClickCount() == 2 && evt.getButton() == MouseButton.PRIMARY)
             {
-                Person p = c.getSelectionModel().getSelectedItem();
+                Person p = v.getSelectionModel().getSelectedItem();
                 AddNewPersonDialog dialog = new AddNewPersonDialog(primaryStage,
                         "Change person data", countries, p);
                 Action result = dialog.showDialog();
@@ -164,6 +196,7 @@ public class Controller implements Initializable
         });
     }
 
+    /** Assign new values to person fields */
     private void update(Person p, Person person)
     {
         p.setFirstname(person.getFirstname());
@@ -175,6 +208,7 @@ public class Controller implements Initializable
         p.setGender(person.getGender());
     }
 
+    /** Add children to the person button clicked - open dialog for children adding */
     @FXML
     private void addChildrenClicked(ActionEvent actionEvent)
     {
@@ -182,7 +216,7 @@ public class Controller implements Initializable
                 .getSelectedItem().getContent();
         Person p = table.getSelectionModel().getSelectedItem();
 
-        PeopleSearchDialog dialog = new PeopleSearchDialog(primaryStage,
+        AddChildrenDialog dialog = new AddChildrenDialog(primaryStage,
                 "Adding children to person", p, peopleDAO, countries);
         if(dialog.showDialog() == dialog.getSubmitAction())
         {
@@ -191,6 +225,7 @@ public class Controller implements Initializable
         }
     }
 
+    /** Browse person's children - tree view control will be opened in new tab */
     @FXML
     private void browseChildrenClicked(ActionEvent actionEvent)
     {
@@ -205,6 +240,35 @@ public class Controller implements Initializable
         tabPane.getSelectionModel().select(tab);
     }
 
+    /** Find people button clicked - dialog for people search by some criteria is opened */
+    @FXML
+    private void findPeopleClicked(ActionEvent actionEvent)
+    {
+        SearchPeopleDialog dialog = new SearchPeopleDialog(primaryStage,
+                "Search people", peopleDAO, countries);
+        dialog.showDialog();
+        if(dialog.isSearch())
+        {
+            List<Person> foundPeople = dialog.getFoundPeople();
+
+            Tab tab = new Tab();
+            tab.setText("Found people");
+            TableViewCustomControl table = new TableViewCustomControl(foundPeople,
+                    deletePersonBtn, addChildrenBtn, browseChildrenBtn, browseParentsBtn);
+            tab.setContent(table);
+            tabPane.getTabs().add(tab);
+            tabPane.getSelectionModel().select(tab);
+        }
+    }
+
+    /** 'About' button clicked */
+    @FXML
+    private void aboutClicked(ActionEvent actionEvent)
+    {
+        Dialogs.create().title("About").message("Written by Ildar").showInformation();
+    }
+
+    /** Delete person button clicked */
     @FXML
     private void deletePersonClicked(ActionEvent actionEvent)
     {
@@ -217,6 +281,8 @@ public class Controller implements Initializable
 
         boolean delete = true;
         if(relatives.size() != 0)
+            //There are relatives of this person - if user still wants this person to delete,
+            //all connections with his relatives will also be deleted
         {
             Action a = Dialogs.create().title("Dependent people")
                     .message("There are relatives, such as children and parents, to this person. " +
@@ -227,6 +293,7 @@ public class Controller implements Initializable
         }
 
         if(delete)
+            //User chose to delete person
         {
             peopleDAO.deletePerson(p);
 
@@ -242,15 +309,21 @@ public class Controller implements Initializable
         }
     }
 
+    /** Initialize the application - connection to the database, user interface etc. */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
+        //initialize DAO interface
         initPeopleDAO();
 
+        //Open one tab with all people from the DB
         showAllPeopleClicked(null);
 
+        //Fetch countries from the DB
         this.countries = peopleDAO.findAllCountries();
 
+        //Configure buttons dependent on the person selection in table -
+        //disable them when no person is selected and enable otherwise
         tabPane.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldVal, newVal) ->
                 {

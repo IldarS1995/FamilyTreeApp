@@ -12,6 +12,7 @@ import ru.kpfu.db.ildar.pojos.Person;
 import java.io.IOException;
 import java.util.List;
 
+/** Represents a table with 6 fields. Person instances are placed here. */
 public class TableViewCustomControl extends TableView<Person>
 {
     @FXML
@@ -29,6 +30,7 @@ public class TableViewCustomControl extends TableView<Person>
 
     public TableViewCustomControl()
     {
+        //Load FXML file where table is defined
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader()
                 .getResource("customwindows/tableviewcustom.fxml"));
         loader.setController(this);
@@ -42,6 +44,7 @@ public class TableViewCustomControl extends TableView<Person>
 
         initColumns();
     }
+    /** @param dependBtns Buttons disabled property of which depends on table item selection. */
     public TableViewCustomControl(Button... dependBtns)
     {
         this();
@@ -65,6 +68,7 @@ public class TableViewCustomControl extends TableView<Person>
         this.setItems(FXCollections.observableArrayList(people));
     }
 
+    /** Binds table columns to the according fields */
     private void initColumns()
     {
         firstnameCol.setCellValueFactory(new PropertyValueFactory<Person, String>("firstname"));
