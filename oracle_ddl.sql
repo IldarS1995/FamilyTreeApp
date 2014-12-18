@@ -1,16 +1,21 @@
+--Create new user for our application
 create user family_tree identified by ildar;
 grant connect, resource to family_tree;
 
+--create sequence - PERSON_ID column in PEOPLE table
+-- will be generated using it
 CREATE SEQUENCE family_tree.seq
 START WITH     1
 INCREMENT BY   1
 NOCACHE
 NOCYCLE;
 
+--Table where countries names will be stored
 create table family_tree.Countries(
 	name varchar(70) not null primary key
 );
 
+--Table where people data will be stored
 create table family_tree.People(
 	person_id int,
 	firstname varchar(70) not null,
@@ -27,6 +32,8 @@ create table family_tree.People(
 	constraint un_passport_id_citizenship unique(passport_id, citizenship)
 );
 
+--Table where relations between people are stored. This table has many-to-many relationship
+--with People table
 create table family_tree.People_Relations(
   parent_id int not null,
   child_id int not null,
@@ -38,3 +45,37 @@ create table family_tree.People_Relations(
   references family_tree.People(person_id),
   constraint ck_parent_not_equal_child check (parent_id <> child_id)
 );
+
+--Procedure that adds new person to the database
+create or replace procedure family_tree.add_person
+  (firstname_ family_tree.people.firstname%TYPE,
+   lastname_ family_tree.people.lastname%TYPE,
+   birth_date_ family_tree.people.birth_date%TYPE,
+   passport_id_ family_tree.people.passport_id%TYPE,
+   birth_place_ family_tree.people.birth_place%TYPE,
+   citizenship_ family_tree.people.citizenship%TYPE,
+   gender_ family_tree.people.gender%TYPE) AS
+  begin
+    insert into PEOPLE (person_id, firstname, lastname, birth_date, passport_id,
+                        birth_place, citizenship, gender)
+    values(seq.nextval, firstname_, lastname_, birth_date_, passport_id_ ,
+           birth_date_, citizenship_, gender_);
+  end;
+
+--Procedure that updates existing person in the database
+create or replace procedure family_tree.update_person
+  (firstname_ family_tree.people.firstname%TYPE,
+   lastname_ family_tree.people.lastname%TYPE,
+   birth_date_ family_tree.people.birth_date%TYPE,
+   passport_id_ family_tree.people.passport_id%TYPE,
+   birth_place_ family_tree.people.birth_place%TYPE,
+   citizenship_ family_tree.people.citizenship%TYPE,
+   gender_ family_tree.people.gender%TYPE,
+   person_id_ family_tree.people.person_id%TYPE) AS
+  begin
+    update PEOPLE
+    set firstname = firstname_, lastname = lastname_, birth_date = birth_date_,
+      passport_id = passport_id_, birth_place = birth_place_, citizenship = citizenship_,
+      gender = gender_
+    where person_id = person_id_;
+  end;

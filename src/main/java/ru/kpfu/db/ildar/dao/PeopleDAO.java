@@ -44,7 +44,7 @@ public interface PeopleDAO
     void addChildrenToPerson(Person selectedItem, List<Person> children);
 
     /** Update person - person is identified by his ID, other fields are updated. */
-    void updatePerson(Person p);
+    int updatePerson(Person p);
 
     /** Check if the specified person has exactly two parents */
     boolean checkFullParents(Person child);

@@ -36,9 +36,8 @@ public class PeopleDAOImpl implements PeopleDAO
     @Override
     public int addPerson(Person p)
     {
-        String sql = "insert into PEOPLE" +
-                "(person_id, firstname, lastname, birth_date, passport_id, " +
-                "birth_place, citizenship, gender) values(seq.nextval,?,?,?,?,?,?,?)";
+        //calling stored procedure from the database
+        String sql = "call family_tree.add_person(?,?,?,?,?,?,?)";
         int rows = jdbcTemplate.update(sql,
                 p.getFirstname(),
                 p.getLastname(),
@@ -112,12 +111,11 @@ public class PeopleDAOImpl implements PeopleDAO
     }
 
     @Override
-    public void updatePerson(Person p)
+    public int updatePerson(Person p)
     {
-        String sql = "update PEOPLE set firstname = ?, lastname = ?, birth_date = ?, " +
-                "passport_id = ?, birth_place = ?, citizenship = ?, gender = ? " +
-                "where person_id = ?";
-        jdbcTemplate.update(sql, p.getFirstname(),
+        //using stored procedure from the database
+        String sql = "call family_tree.update_person(?,?,?,?,?,?,?,?)";
+        return jdbcTemplate.update(sql, p.getFirstname(),
                 p.getLastname(),
                 p.getBirthDate(),
                 p.getPassportId(),
