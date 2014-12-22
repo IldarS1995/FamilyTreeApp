@@ -59,7 +59,7 @@ create or replace procedure family_tree.add_person
     insert into PEOPLE (person_id, firstname, lastname, birth_date, passport_id,
                         birth_place, citizenship, gender)
     values(seq.nextval, firstname_, lastname_, birth_date_, passport_id_ ,
-           birth_date_, citizenship_, gender_);
+           birth_place_, citizenship_, gender_);
   end;
 
 --Procedure that updates existing person in the database
@@ -79,3 +79,21 @@ create or replace procedure family_tree.update_person
       gender = gender_
     where person_id = person_id_;
   end;
+
+--Insert some countries to the Countries table
+insert into family_tree.Countries(name) values('Austria');
+insert into family_tree.Countries(name) values('Canada');
+insert into family_tree.Countries(name) values('China');
+insert into family_tree.Countries(name) values('France');
+insert into family_tree.Countries(name) values('Germany');
+insert into family_tree.Countries(name) values('India');
+insert into family_tree.Countries(name) values('Japan');
+insert into family_tree.Countries(name) values('Pakistan');
+insert into family_tree.Countries(name) values('Republic of Korea');
+insert into family_tree.Countries(name) values('Russia');
+insert into family_tree.Countries(name) values('Sweden');
+insert into family_tree.Countries(name) values('Switzerland');
+insert into family_tree.Countries(name) values('Taiwan');
+insert into family_tree.Countries(name) values('UK');
+insert into family_tree.Countries(name) values('USA');
+insert into family_tree.Countries(name) values('Ukraine');

@@ -94,5 +94,6 @@
         </Button>
     </HBox>
 
-    <TabPane fx:id="tabPane" GridPane.rowIndex="2" GridPane.hgrow="ALWAYS" />
+    <TabPane fx:id="tabPane" GridPane.rowIndex="2"
+             GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" />
 </GridPane>

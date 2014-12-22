@@ -66,7 +66,7 @@ public class Controller implements Initializable
     {
         //Spring framework JDBC templates is used
         ConfigurableApplicationContext context =
-                new ClassPathXmlApplicationContext("dispatcher-servlet.xml");
+                new ClassPathXmlApplicationContext("spring-beans.xml");
         peopleDAO = context.getBean(PeopleDAO.class);
         context.close();
     }
